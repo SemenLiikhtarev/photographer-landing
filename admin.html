@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Админка — Артём Акимов, фотограф</title>
+  <meta name="theme-color" content="#faf8f5">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ============================================================
+       Админ-панель — переопределения и дополнения
+       ============================================================ */
+    :root {
+      --admin-sidebar-w: 260px;
+    }
+
+    .admin {
+      display: grid;
+      grid-template-columns: var(--admin-sidebar-w) 1fr;
+      min-height: 100vh;
+    }
+
+    .admin__sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      overflow-y: auto;
+    }
+
+    .admin__brand {
+      font-family: var(--font-head);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      display: block;
+    }
+
+    .admin__nav {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin__nav a {
+      display: block;
+      padding: .65rem 1rem;
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .95rem;
+      transition: background .2s, color .2s;
+    }
+
+    .admin__nav a:hover {
+      background: rgba(192, 133, 115, .1);
+      color: var(--accent-dark);
+    }
+
+    .admin__nav a.is-active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .admin__main {
+      padding: 2rem 3rem 4rem;
+      overflow-y: auto;
+      min-width: 0;
+    }
+
+    .admin__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin__section {
+      display: none;
+    }
+
+    .admin__section--active {
+      display: block;
+    }
+
+    .admin__section > h2 {
+      margin-top: 0;
+    }
+
+    .admin__card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .admin__card h3 {
+      margin: 0 0 1rem;
+      font-family: var(--font-head);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .admin__form-row {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .admin__form-row--wide {
+        grid-template-columns: 2fr 1fr 1fr;
+      }
+      .admin__form-row--2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .admin label {
+      display: block;
+      font-weight: 500;
+      font-size: .9rem;
+      margin-bottom: .35rem;
+    }
+
+    .admin input[type="text"],
+    .admin input[type="email"],
+    .admin input[type="url"],
+    .admin input[type="tel"],
+    .admin input[type="password"],
+    .admin input[type="file"],
+    .admin select,
+    .admin textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: .55rem .75rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .admin textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .admin label input,
+    .admin label select,
+    .admin label textarea {
+      margin-top: .35rem;
+    }
+
+    .admin__file-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .admin__file-item {
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .admin__file-thumb {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #f4f1ed;
+    }
+
+    .admin__file-info {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      min-width: 0;
+    }
+
+    .admin__file-title {
+      font-weight: 600;
+      font-size: .95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .admin__file-meta {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .admin__file-info label {
+      margin: 0;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .admin__file-info input,
+    .admin__file-info select {
+      min-height: 38px;
+      padding: .35rem .5rem;
+      font-size: .9rem;
+      margin-top: .2rem;
+    }
+
+    .admin__file-actions {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    .admin__btn-danger {
+      background: transparent;
+      color: #a33a3a;
+      border: 1px solid #e7d0cb;
+      padding: .4rem .8rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: .9rem;
+      min-height: 38px;
+    }
+
+    .admin__btn-danger:hover {
+      background: #fdeeea;
+      border-color: #c08573;
+    }
+
+    .admin__btn-mini {
+      background: #f4f1ed;
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: .3rem .6rem;
+      min-height: 38px;
+      cursor: pointer;
+    }
+
+    .admin__btn-mini:hover {
+      border-color: var(--accent);
+    }
+
+    .admin__btn-mini:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+
+    .admin__export pre {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem;
+      overflow: auto;
+      font-size: .85rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--text);
+    }
+
+    .admin__export textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .82rem;
+    }
+
+    .admin__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .admin__empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+
+    .admin__note {
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .admin__stat {
+      flex: 1;
+      min-width: 120px;
+      background: #f4f1ed;
+      padding: 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .admin__stat b {
+      display: block;
+      font-size: 1.75rem;
+      color: var(--accent-dark);
+    }
+
+    .admin__stat span {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    /* Уведомления */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      font-size: .95rem;
+      opacity: 0;
+      transition: transform .3s, opacity .3s;
+      z-index: 100;
+      pointer-events: none;
+      max-width: calc(100vw - 2rem);
+      text-align: center;
+    }
+
+    .toast--show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Логин */
+    .admin__login {
+      max-width: 400px;
+      margin: 10vh auto;
+      padding: 0 1rem;
+    }
+
+    .admin__login-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .admin__login h1 {
+      margin: 0 0 1.5rem;
+      font-family: var(--font-head);
+      font-size: 1.75rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .admin__login .btn {
+      width: 100%;
+      margin-top: .5rem;
+    }
+
+    .admin__login-hint {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    /* Мобильная версия */
+    .admin__menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .admin__overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      background: rgba(31, 29, 27, .3);
+    }
+
+    @media (max-width: 860px) {
+      .admin {
+        grid-template-columns: 1fr;
+      }
+      .admin__sidebar {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        transform: translateX(-100%);
+        transition: transform .25s;
+        box-shadow: var(--shadow);
+        max-width: 300px;
+      }
+      .admin__sidebar--open {
+        transform: none;
+      }
+      .admin__overlay--open {
+        display: block;
+      }
+      .admin__menu-btn {
+        display: inline-flex;
+      }
+      .admin__main {
+        padding: 1.25rem 1rem 4rem;
+      }
+      .admin__file-item {
+        grid-template-columns: 80px 1fr;
+      }
+      .admin__file-actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .admin__header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg);
+        margin: -1.25rem -1rem 1.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#admin-content">Перейти к содержимому</a>
+
+  <div class="admin">
+    <nav class="admin__sidebar" id="adminSidebar" aria-label="Разделы админки">
+      <a href="#dashboard" class="admin__brand">Артём Акимов</a>
+      <div class="admin__nav">
+        <a href="#dashboard" class="admin__nav-link is-active" data-section="dashboard">Главная</a>
+        <a href="#gallery" class="admin__nav-link" data-section="gallery">Галерея</a>
+        <a href="#pricing" class="admin__nav-link" data-section="pricing">Цены</a>
+        <a href="#contacts" class="admin__nav-link" data-section="contacts">Контакты</a>
+        <a href="#publish" class="admin__nav-link" data-section="publish">Публикация</a>
+      </div>
+      <a class="btn btn--secondary" href="index.html" target="_blank" rel="noopener" style="width:100%;margin-bottom:.75rem;">Открыть сайт ↗</a>
+      <button class="btn btn--secondary" style="width:100%;" id="adminLogout">Выйти</button>
+    </nav>
+
+    <div class="admin__overlay" id="adminOverlay"></div>
+
+    <main class="admin__main">
+      <header class="admin__header">
+        <button class="admin__menu-btn" id="adminMenuBtn" aria-label="Открыть меню" aria-expanded="false" aria-controls="adminSidebar">☰</button>
+        <div>
+          <strong id="adminUser">Администратор</strong>
+          <div class="admin__note" id="storageStatus">—</div>
+        </div>
+      </header>
+
+      <div id="admin-content" tabindex="-1">
+
+        <!-- ===== Главная ===== -->
+        <section id="section-dashboard" class="admin__section admin__section--active">
+          <h2>Панель управления</h2>
+          <p class="admin__note">Изменения сохраняются в браузере и сразу применяются к сайту на этом устройстве. Для публикации на хостинге используйте раздел «Публикация».</p>
+
+          <div class="admin__card">
+            <h3>Быстрые действия</h3>
+            <div class="admin__actions">
+              <button class="btn btn--primary" data-goto="gallery">Добавить фото</button>
+              <button class="btn btn--secondary" data-goto="pricing">Изменить цены</button>
+              <button class="btn btn--secondary" data-goto="contacts">Изменить контакты</button>
+            </div>
+          </div>
+
+          <div class="admin__card">
+            <h3>Статистика галереи</h3>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+              <div class="admin__stat"><b id="statTotal">0</b><span>всего фото</span></div>
+              <div class="admin__stat"><b id="statWeddings">0</b><span>свадьбы</span></div>
+              <div class="admin__stat"><b id="statFamilies">0</b><span>семьи</span></div>
+              <div class="admin__stat"><b id="statKids">0</b><span>дети</span></div>
+            </div>
+          </div>
+
+          <div class="admin__card">
+            <h3>Как это работает</h3>
+            <ol class="admin__note" style="margin:0;padding-left:1.25rem;">
+              <li>Добавьте фото, укажите категорию и alt-описание.</li>
+              <li>Измените цены и контакты в соответствующих разделах.</li>
+              <li>Откройте <code>index.html</code> — данные подставятся автоматически.</li>
+              <li>Для хостинга скачайте <code>data.json</code> в разделе «Публикация» и положите рядом с <code>index.html</code>.</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- ===== Галерея ===== -->
+        <section id="section-gallery" class="admin__section">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+            <h2 style="margin:0;">Галерея</h2>
+            <button class="btn btn--primary" id="btnAddPhoto">+ Добавить фото</button>
+          </div>
+
+          <form id="addPhotoForm" class="admin__card" style="display:none;">
+            <h3>Новое фото</h3>
+            <div class="admin__form-row admin__form-row--2">
+              <div>
+                <label for="photoFile">Изображение</label>
+                <input type="file" id="photoFile" accept="image/*" required>
+              </div>
+              <div>
+                <label for="photoCategory">Категория</label>
+                <select id="photoCategory" required>
+                  <option value="weddings">Свадьбы</option>
+                  <option value="families">Семьи</option>
+                  <option value="kids">Дети</option>
+                </select>
+              </div>
+            </div>
+            <div class="admin__form-row">
+              <div>
+                <label for="photoAlt">Alt-описание (для доступности и SEO)</label>
+                <input type="text" id="photoAlt" required placeholder="Например: свадебная церемония в Москве, обмен кольцами">
+              </div>
+            </div>
+            <div id="photoPreview"></div>
+            <div class="admin__actions">
+              <button type="submit" class="btn btn--primary">Загрузить фото</button>
+              <button type="button" class="btn btn--secondary" id="btnCancelPhoto">Отмена</button>
+            </div>
+            <p class="admin__note" style="margin-bottom:0;">Фото автоматически сжимается до 1200 px по длинной стороне, чтобы поместиться в хранилище браузера (ориентир — 20–25 фото).</p>
+          </form>
+
+          <div id="photoList" class="admin__file-list"></div>
+          <div id="photoListEmpty" class="admin__empty" hidden>
+            <p>Фотографий нет. Нажмите «Добавить фото».</p>
+          </div>
+
+          <div class="admin__card" style="margin-top:1.5rem;">
+            <h3>Сброс галереи</h3>
+            <p class="admin__note" style="margin-top:0;">Вернуть исходные 14 фотографий из папки <code>img/</code>. Все добавленные и изменённые фото будут удалены.</p>
+            <button class="admin__btn-danger" id="btnResetPhotos" type="button">Сбросить к фото сайта</button>
+          </div>
+        </section>
+
+        <!-- ===== Цены ===== -->
+        <section id="section-pricing" class="admin__section">
+          <h2>Цены</h2>
+          <p class="admin__note">Изменения появятся на сайте сразу после сохранения и обновления страницы.</p>
+
+          <form id="pricingForm">
+            <div class="admin__card" data-plan-card="love-story">
+              <h3>Love-story</h3>
+              <div class="admin__form-row admin__form-row--2">
+                <div><label>Название<input type="text" name="name"></label></div>
+                <div><label>Цена<input type="text" name="price" placeholder="12 000 ₽"></label></div>
+              </div>
+              <div class="admin__form-row"><div><label>Описание<textarea name="desc" rows="3"></textarea></label></div></div>
+              <div class="admin__form-row"><div><label>Что входит (по пункту в строке)<textarea name="includes" rows="4"></textarea></label></div></div>
+            </div>
+
+            <div class="admin__card" data-plan-card="wedding-day">
+              <h3>Свадебный день</h3>
+              <div class="admin__form-row admin__form-row--2">
+                <div><label>Название<input type="text" name="name"></label></div>
+                <div><label>Цена<input type="text" name="price" placeholder="40 000 ₽"></label></div>
+              </div>
+              <div class="admin__form-row"><div><label>Описание<textarea name="desc" rows="3"></textarea></label></div></div>
+              <div class="admin__form-row"><div><label>Что входит (по пункту в строке)<textarea name="includes" rows="5"></textarea></label></div></div>
+            </div>
+
+            <div class="admin__card" data-plan-card="family">
+              <h3>Семейная</h3>
+              <div class="admin__form-row admin__form-row--2">
+                <div><label>Название<input type="text" name="name"></label></div>
+                <div><label>Цена<input type="text" name="price" placeholder="10 000 ₽"></label></div>
+              </div>
+              <div class="admin__form-row"><div><label>Описание<textarea name="desc" rows="3"></textarea></label></div></div>
+              <div class="admin__form-row"><div><label>Что входит (по пункту в строке)<textarea name="includes" rows="4"></textarea></label></div></div>
+            </div>
+
+            <div class="admin__actions" style="margin-bottom:2rem;">
+              <button type="submit" class="btn btn--primary">Сохранить цены</button>
+              <button type="button" class="btn btn--secondary" id="btnResetPricing">Сбросить к исходным</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ===== Контакты ===== -->
+        <section id="section-contacts" class="admin__section">
+          <h2>Контакты</h2>
+          <p class="admin__note">Эти данные подставляются в блок «Свяжитесь со мной».</p>
+
+          <form id="contactsForm">
+            <div class="admin__card">
+              <div class="admin__form-row admin__form-row--2">
+                <div><label for="contactCity">Город</label><input type="text" id="contactCity" name="city" placeholder="Москва"></div>
+                <div><label for="contactPhone">Телефон</label><input type="tel" id="contactPhone" name="phone" placeholder="+7 (900) 000-00-00"></div>
+              </div>
+              <div class="admin__form-row admin__form-row--2">
+                <div><label for="contactEmail">Email</label><input type="email" id="contactEmail" name="email" placeholder="hello@example.com"></div>
+                <div><label for="contactVk">Профиль ВКонтакте</label><input type="url" id="contactVk" name="vk" placeholder="https://vk.com/username"></div>
+              </div>
+              <div class="admin__actions">
+                <button type="submit" class="btn btn--primary">Сохранить контакты</button>
+                <button type="button" class="btn btn--secondary" id="btnResetContacts">Сбросить к исходным</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- ===== Публикация ===== -->
+        <section id="section-publish" class="admin__section">
+          <h2>Публикация</h2>
+
+          <div class="admin__card">
+            <h3>Как изменения попадают на сайт</h3>
+            <ol class="admin__note" style="margin:0;padding-left:1.25rem;">
+              <li><strong>На этом устройстве</strong> — автоматически: сайт читает данные из хранилища браузера (ключи <code>akimov_photos</code>, <code>akimov_pricing</code>, <code>akimov_contacts</code>).</li>
+              <li><strong>На хостинге</strong> — скачайте <code>data.json</code> ниже и положите его в одну папку с <code>index.html</code>. Файл читается, если в браузере посетителя ещё нет локальных данных.</li>
+            </ol>
+            <p class="admin__note" style="margin-bottom:0;">Важно: браузер делится <code>localStorage</code> только между страницами одного адреса. Если открываете файлы напрямую (<code>file://</code>), запустите <code>start-server.bat</code> из папки проекта — он откроет <code>http://localhost:8000/admin.html</code>, и сайт будет читать те же данные.</p>
+          </div>
+
+          <div class="admin__card admin__export">
+            <h3>data.json</h3>
+            <p class="admin__note" style="margin-top:0;">Единый файл со всеми фото, ценами и контактами.</p>
+            <div class="admin__actions">
+              <button class="btn btn--primary" id="btnDownloadJson" type="button">Скачать data.json</button>
+              <button class="btn btn--secondary" id="btnCopyJson" type="button">Скопировать JSON</button>
+            </div>
+            <div class="admin__form-row" style="margin-top:1.5rem;">
+              <div>
+                <label for="importFile">Загрузить data.json (восстановление)</label>
+                <input type="file" id="importFile" accept="application/json,.json">
+              </div>
+            </div>
+          </div>
+
+          <div class="admin__card admin__export">
+            <h3>HTML галереи (необязательно)</h3>
+            <p class="admin__note" style="margin-top:0;">Нужен, только если хотите «зашить» фото прямо в <code>index.html</code> без <code>content.js</code>.</p>
+            <textarea id="exportHtml" readonly rows="12"></textarea>
+            <div class="admin__actions">
+              <button class="btn btn--secondary" id="btnCopyHtml" type="button">Скопировать HTML</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ============================================================
+       Админ-панель статического сайта.
+       Данные: localStorage → сайт читает их через content.js.
+       ============================================================ */
+    (() => {
+      'use strict';
+
+      const PASSWORD = 'admin2025'; // смените на свой пароль
+      const KEYS = {
+        photos: 'akimov_photos',
+        pricing: 'akimov_pricing',
+        contacts: 'akimov_contacts',
+      };
+      const MAX_SIDE = 1200;
+      const JPEG_QUALITY = 0.78;
+
+      const DEFAULT_PHOTOS = [
+        { id: 1, src: 'img/image (1).jpeg', category: 'weddings', alt: 'Свадебная церемония в Москве — жених и невеста обмениваются кольцами', span: 34 },
+        { id: 2, src: 'img/image (2).jpeg', category: 'weddings', alt: 'Первый танец молодожёнов на свадьбе в Подмосковье', span: 38 },
+        { id: 3, src: 'img/image (3).jpeg', category: 'weddings', alt: 'Невеста на сборах — момент перед выходом к жениху', span: 28 },
+        { id: 4, src: 'img/image (4).jpeg', category: 'weddings', alt: 'Свадебный портрет пары на закате в парке', span: 21 },
+        { id: 5, src: 'img/image (5).jpeg', category: 'weddings', alt: 'Эмоции гостей на свадьбе — родители вытирают слёзы', span: 34 },
+        { id: 6, src: 'img/image (1).jpeg', category: 'weddings', alt: 'Пара обнимается на крыше с видом на Москву', span: 38 },
+        { id: 7, src: 'img/image (2).jpeg', category: 'families', alt: 'Семейная фотосессия с двумя детьми в московском парке', span: 34 },
+        { id: 8, src: 'img/image (3).jpeg', category: 'families', alt: 'Родители с малышом на руках — тёплый кадр дома', span: 38 },
+        { id: 9, src: 'img/image (4).jpeg', category: 'families', alt: 'Семья гуляет по осеннему парку в Москве', span: 28 },
+        { id: 10, src: 'img/image (5).jpeg', category: 'families', alt: 'Мама и дочка смеются на семейной съёмке', span: 21 },
+        { id: 11, src: 'img/image (1).jpeg', category: 'kids', alt: 'Детский портрет — ребёнок играет в парке', span: 34 },
+        { id: 12, src: 'img/image (2).jpeg', category: 'kids', alt: 'Малыш в кроватке — newborn-съёмка дома', span: 38 },
+        { id: 13, src: 'img/image (3).jpeg', category: 'kids', alt: 'Ребёнок бежит по траве на закате', span: 28 },
+        { id: 14, src: 'img/image (4).jpeg', category: 'kids', alt: 'Love-story пары на Патриарших прудах', span: 21 },
+      ];
+
+      const DEFAULT_PRICING = {
+        'love-story': {
+          name: 'Love-story',
+          price: '12 000 ₽',
+          desc: 'Прогулка для двоих — по Москве, в парке или на вашей любимой локации. Без спешки, без большого количества людей, только вы и я с камерой. Подойдёт для пар, которые хотят живые кадры без свадебной суеты.',
+          includes: ['1–2 часа съёмки', '40–60 обработанных фото', 'все исходники', 'срок отдачи 2–3 недели'],
+        },
+        'wedding-day': {
+          name: 'Свадебный день',
+          price: '40 000 ₽',
+          desc: 'Полный репортаж вашего дня — от сборов невесты до финального танца. Я не пропущу ни взгляды родителей, ни смех подружек, ни тихие минуты, когда вы остаётесь вдвоём. Самый честный способ сохранить свадьбу такой, какой она была.',
+          includes: ['8–10 часов съёмки', '300–500 обработанных фото', 'все исходники', 'предсвадебная love-story в подарок', 'срок отдачи 4–6 недель'],
+        },
+        family: {
+          name: 'Семейная',
+          price: '10 000 ₽',
+          desc: 'Съёмка для семьи с детьми — дома, в парке или на вашей любимой площадке. Я не тороплю и не заставляю позировать: играю с детьми, разговариваю с вами и ловлю моменты, которые обычно остаются за кадром.',
+          includes: ['1–2 часа съёмки', '50–70 обработанных фото', 'все исходники', 'срок отдачи 2–4 недели'],
+        },
+      };
+
+      const DEFAULT_CONTACTS = {
+        city: 'Москва',
+        phone: '+7 (900) 000-00-00',
+        email: 'hello@example.com',
+        vk: 'https://vk.com/username',
+      };
+
+      /* ---------- Авторизация ---------- */
+      function isAuthenticated() {
+        try {
+          return sessionStorage.getItem('akimov_admin') === '1';
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function showLogin() {
+        document.body.innerHTML = `
+          <div class="admin__login">
+            <div class="admin__login-card">
+              <h1>Вход в админку</h1>
+              <label for="adminPassword">Пароль</label>
+              <input type="password" id="adminPassword" autocomplete="current-password">
+              <button class="btn btn--primary" id="btnLogin">Войти</button>
+              <p class="admin__login-hint">Пароль по умолчанию: admin2025</p>
+            </div>
+          </div>
+        `;
+
+        const input = document.getElementById('adminPassword');
+        const submit = () => {
+          if (input.value === PASSWORD) {
+            try {
+              sessionStorage.setItem('akimov_admin', '1');
+            } catch (err) {
+              /* игнорируем */
+            }
+            location.reload();
+          } else {
+            alert('Неверный пароль');
+            input.select();
+          }
+        };
+
+        document.getElementById('btnLogin').addEventListener('click', submit);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') submit();
+        });
+        input.focus();
+      }
+
+      if (!isAuthenticated()) {
+        showLogin();
+        return;
+      }
+
+      /* ---------- State ---------- */
+      function clone(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function readStore(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (err) {
+          console.warn('Не удалось прочитать', key, err);
+          return null;
+        }
+      }
+
+      function writeStore(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (err) {
+          console.error('Не удалось сохранить', key, err);
+          notify('Хранилище браузера заполнено. Удалите часть фото или уменьшите их размер.');
+          return false;
+        }
+      }
+
+      function normalizePricing(stored) {
+        const base = clone(DEFAULT_PRICING);
+        if (!stored || typeof stored !== 'object') return base;
+
+        Object.keys(base).forEach((plan) => {
+          const data = stored[plan];
+          if (!data || typeof data !== 'object') return;
+          base[plan] = {
+            name: typeof data.name === 'string' ? data.name : base[plan].name,
+            price: typeof data.price === 'string' ? data.price : base[plan].price,
+            desc: typeof data.desc === 'string' ? data.desc : base[plan].desc,
+            includes: Array.isArray(data.includes) ? data.includes : base[plan].includes,
+          };
+        });
+        return base;
+      }
+
+      let photos = readStore(KEYS.photos);
+      if (!Array.isArray(photos) || photos.length === 0) photos = clone(DEFAULT_PHOTOS);
+
+      let pricing = normalizePricing(readStore(KEYS.pricing));
+      let contacts = Object.assign(clone(DEFAULT_CONTACTS), readStore(KEYS.contacts) || {});
+
+      /* ---------- DOM ---------- */
+      const sections = document.querySelectorAll('.admin__section');
+      const navLinks = document.querySelectorAll('.admin__nav-link');
+      const sidebar = document.getElementById('adminSidebar');
+      const overlay = document.getElementById('adminOverlay');
+      const menuBtn = document.getElementById('adminMenuBtn');
+      const logoutBtn = document.getElementById('adminLogout');
+      const toast = document.getElementById('toast');
+      const storageStatus = document.getElementById('storageStatus');
+
+      const photoList = document.getElementById('photoList');
+      const photoListEmpty = document.getElementById('photoListEmpty');
+      const addPhotoForm = document.getElementById('addPhotoForm');
+      const btnAddPhoto = document.getElementById('btnAddPhoto');
+      const btnCancelPhoto = document.getElementById('btnCancelPhoto');
+      const btnResetPhotos = document.getElementById('btnResetPhotos');
+      const photoFile = document.getElementById('photoFile');
+      const photoCategory = document.getElementById('photoCategory');
+      const photoAlt = document.getElementById('photoAlt');
+      const photoPreview = document.getElementById('photoPreview');
+
+      const pricingForm = document.getElementById('pricingForm');
+      const btnResetPricing = document.getElementById('btnResetPricing');
+      const contactsForm = document.getElementById('contactsForm');
+      const btnResetContacts = document.getElementById('btnResetContacts');
+
+      const exportHtml = document.getElementById('exportHtml');
+      const btnCopyHtml = document.getElementById('btnCopyHtml');
+      const btnDownloadJson = document.getElementById('btnDownloadJson');
+      const btnCopyJson = document.getElementById('btnCopyJson');
+      const importFile = document.getElementById('importFile');
+
+      const statEls = {
+        total: document.getElementById('statTotal'),
+        weddings: document.getElementById('statWeddings'),
+        families: document.getElementById('statFamilies'),
+        kids: document.getElementById('statKids'),
+      };
+
+      /* ---------- Утилиты ---------- */
+      function escapeHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[ch]));
+      }
+
+      function notify(message) {
+        toast.textContent = message;
+        toast.classList.add('toast--show');
+        clearTimeout(notify.timer);
+        notify.timer = setTimeout(() => toast.classList.remove('toast--show'), 3200);
+      }
+
+      function nextPhotoId() {
+        return photos.reduce((max, photo) => Math.max(max, Number(photo.id) || 0), 0) + 1;
+      }
+
+      function updateStorageStatus() {
+        let bytes = 0;
+        Object.values(KEYS).forEach((key) => {
+          try {
+            bytes += (localStorage.getItem(key) || '').length;
+          } catch (err) {
+            /* игнорируем */
+          }
+        });
+        const mb = (bytes / 1024 / 1024).toFixed(2);
+        storageStatus.textContent = photos.length + ' фото · ' + mb + ' МБ в хранилище браузера';
+      }
+
+      /* ---------- Навигация ---------- */
+      function showSection(id) {
+        sections.forEach((section) => {
+          section.classList.toggle('admin__section--active', section.id === 'section-' + id);
+        });
+        navLinks.forEach((link) => {
+          link.classList.toggle('is-active', link.dataset.section === id);
+        });
+        closeSidebar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('admin__sidebar--open');
+        overlay.classList.remove('admin__overlay--open');
+        menuBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      menuBtn.addEventListener('click', () => {
+        const open = !sidebar.classList.contains('admin__sidebar--open');
+        sidebar.classList.toggle('admin__sidebar--open', open);
+        overlay.classList.toggle('admin__overlay--open', open);
+        menuBtn.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      logoutBtn.addEventListener('click', () => {
+        try {
+          sessionStorage.removeItem('akimov_admin');
+        } catch (err) {
+          /* игнорируем */
+        }
+        location.reload();
+      });
+
+      navLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      document.querySelectorAll('[data-goto]').forEach((button) => {
+        button.addEventListener('click', () => showSection(button.dataset.goto));
+      });
+
+      /* ---------- Галерея ---------- */
+      function renderGallery() {
+        photoList.innerHTML = '';
+        photoListEmpty.hidden = photos.length > 0;
+
+        photos.forEach((photo, index) => {
+          const item = document.createElement('div');
+          item.className = 'admin__file-item';
+
+          const thumb = document.createElement('img');
+          thumb.className = 'admin__file-thumb';
+          thumb.src = photo.src;
+          thumb.alt = photo.alt || '';
+          thumb.loading = 'lazy';
+
+          const info = document.createElement('div');
+          info.className = 'admin__file-info';
+          info.innerHTML =
+            '<div class="admin__file-title">Фото ' + (index + 1) + '</div>' +
+            '<div class="admin__file-meta">' + (photo.width && photo.height ? photo.width + '×' + photo.height + ' px' : 'изображение') + '</div>' +
+            '<label>Категория<select data-category-id="' + photo.id + '">' +
+              '<option value="weddings"' + (photo.category === 'weddings' ? ' selected' : '') + '>Свадьбы</option>' +
+              '<option value="families"' + (photo.category === 'families' ? ' selected' : '') + '>Семьи</option>' +
+              '<option value="kids"' + (photo.category === 'kids' ? ' selected' : '') + '>Дети</option>' +
+            '</select></label>' +
+            '<label>Alt-описание<input type="text" data-alt-id="' + photo.id + '" value="' + escapeHtml(photo.alt) + '"></label>';
+
+          const actions = document.createElement('div');
+          actions.className = 'admin__file-actions';
+          actions.innerHTML =
+            '<button class="admin__btn-mini" data-move-id="' + photo.id + '" data-dir="-1" title="Выше" aria-label="Переместить фото выше" ' + (index === 0 ? 'disabled' : '') + '>↑</button>' +
+            '<button class="admin__btn-mini" data-move-id="' + photo.id + '" data-dir="1" title="Ниже" aria-label="Переместить фото ниже" ' + (index === photos.length - 1 ? 'disabled' : '') + '>↓</button>' +
+            '<button class="admin__btn-danger" data-delete-id="' + photo.id + '" aria-label="Удалить фото">Удалить</button>';
+
+          item.append(thumb, info, actions);
+          photoList.appendChild(item);
+        });
+
+        updateStorageStatus();
+      }
+
+      function renderStats() {
+        const byCat = photos.reduce((acc, photo) => {
+          acc[photo.category] = (acc[photo.category] || 0) + 1;
+          return acc;
+        }, {});
+        statEls.total.textContent = photos.length;
+        statEls.weddings.textContent = byCat.weddings || 0;
+        statEls.families.textContent = byCat.families || 0;
+        statEls.kids.textContent = byCat.kids || 0;
+      }
+
+      function savePhotos() {
+        writeStore(KEYS.photos, photos);
+        renderGallery();
+        renderStats();
+        renderExport();
+      }
+
+      photoList.addEventListener('change', (e) => {
+        const categoryId = e.target.dataset.categoryId;
+        const altId = e.target.dataset.altId;
+
+        if (categoryId) {
+          const photo = photos.find((p) => String(p.id) === categoryId);
+          if (photo) {
+            photo.category = e.target.value;
+            savePhotos();
+            notify('Категория обновлена');
+          }
+        }
+
+        if (altId) {
+          const photo = photos.find((p) => String(p.id) === altId);
+          if (photo) {
+            photo.alt = e.target.value.trim();
+            savePhotos();
+            notify('Описание обновлено');
+          }
+        }
+      });
+
+      photoList.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('[data-delete-id]');
+        if (deleteBtn) {
+          const id = deleteBtn.dataset.deleteId;
+          if (confirm('Удалить это фото из галереи?')) {
+            photos = photos.filter((p) => String(p.id) !== id);
+            savePhotos();
+            notify('Фото удалено');
+          }
+          return;
+        }
+
+        const moveBtn = e.target.closest('[data-move-id]');
+        if (moveBtn) {
+          const id = moveBtn.dataset.moveId;
+          const dir = Number(moveBtn.dataset.dir);
+          const index = photos.findIndex((p) => String(p.id) === id);
+          const target = index + dir;
+          if (index !== -1 && target >= 0 && target < photos.length) {
+            const [moved] = photos.splice(index, 1);
+            photos.splice(target, 0, moved);
+            savePhotos();
+          }
+        }
+      });
+
+      btnAddPhoto.addEventListener('click', () => {
+        addPhotoForm.style.display = 'block';
+        addPhotoForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        photoFile.focus();
+      });
+
+      btnCancelPhoto.addEventListener('click', () => {
+        addPhotoForm.reset();
+        photoPreview.innerHTML = '';
+        addPhotoForm.style.display = 'none';
+      });
+
+      function compressImage(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('Не удалось прочитать файл'));
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error('Не удалось открыть изображение'));
+            img.onload = () => {
+              const scale = Math.min(1, MAX_SIDE / Math.max(img.width, img.height));
+              const width = Math.max(1, Math.round(img.width * scale));
+              const height = Math.max(1, Math.round(img.height * scale));
+
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#faf8f5';
+              ctx.fillRect(0, 0, width, height);
+              ctx.drawImage(img, 0, 0, width, height);
+
+              resolve({
+                dataUrl: canvas.toDataURL('image/jpeg', JPEG_QUALITY),
+                width,
+                height,
+              });
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      photoFile.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        photoPreview.innerHTML = '';
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+          notify('Выберите файл изображения');
+          photoFile.value = '';
+          return;
+        }
+
+        photoPreview.innerHTML = '<p class="admin__note">Сжимаю изображение…</p>';
+
+        try {
+          const result = await compressImage(file);
+          photoPreview.dataset.url = result.dataUrl;
+          photoPreview.dataset.width = result.width;
+          photoPreview.dataset.height = result.height;
+          photoPreview.innerHTML = '';
+
+          const preview = document.createElement('img');
+          preview.src = result.dataUrl;
+          preview.alt = 'Предпросмотр';
+          preview.style.cssText = 'max-width:220px;border:1px solid var(--line);border-radius:var(--radius);display:block;';
+          photoPreview.appendChild(preview);
+
+          const meta = document.createElement('p');
+          meta.className = 'admin__note';
+          meta.textContent = result.width + '×' + result.height + ' px · ' + Math.round(result.dataUrl.length / 1024) + ' КБ';
+          photoPreview.appendChild(meta);
+        } catch (err) {
+          console.error(err);
+          notify(err.message || 'Не удалось обработать изображение');
+        }
+      });
+
+      addPhotoForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        if (!photoPreview.dataset.url) {
+          notify('Сначала выберите изображение');
+          return;
+        }
+
+        const alt = photoAlt.value.trim();
+        if (!alt) {
+          notify('Введите alt-описание');
+          photoAlt.focus();
+          return;
+        }
+
+        photos.push({
+          id: nextPhotoId(),
+          src: photoPreview.dataset.url,
+          category: photoCategory.value,
+          alt,
+          width: Number(photoPreview.dataset.width) || 1400,
+          height: Number(photoPreview.dataset.height) || 1400,
+          span: [34, 38, 28, 21][photos.length % 4],
+        });
+
+        savePhotos();
+
+        addPhotoForm.reset();
+        photoPreview.innerHTML = '';
+        delete photoPreview.dataset.url;
+        addPhotoForm.style.display = 'none';
+        notify('Фото добавлено — откройте сайт, оно уже там');
+      });
+
+      btnResetPhotos.addEventListener('click', () => {
+        if (!confirm('Вернуть исходные 14 фото? Все изменения галереи будут потеряны.')) return;
+        photos = clone(DEFAULT_PHOTOS);
+        savePhotos();
+        notify('Галерея сброшена к исходной');
+      });
+
+      /* ---------- Цены ---------- */
+      function fillPricingForm() {
+        pricingForm.querySelectorAll('[data-plan-card]').forEach((card) => {
+          const data = pricing[card.dataset.planCard];
+          if (!data) return;
+          card.querySelector('[name="name"]').value = data.name || '';
+          card.querySelector('[name="price"]').value = data.price || '';
+          card.querySelector('[name="desc"]').value = data.desc || '';
+          card.querySelector('[name="includes"]').value = (data.includes || []).join('\n');
+        });
+      }
+
+      function collectPricingForm() {
+        const result = {};
+        pricingForm.querySelectorAll('[data-plan-card]').forEach((card) => {
+          const includes = card.querySelector('[name="includes"]').value
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+          result[card.dataset.planCard] = {
+            name: card.querySelector('[name="name"]').value.trim(),
+            price: card.querySelector('[name="price"]').value.trim(),
+            desc: card.querySelector('[name="desc"]').value.trim(),
+            includes,
+          };
+        });
+        return result;
+      }
+
+      pricingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        pricing = collectPricingForm();
+        if (writeStore(KEYS.pricing, pricing)) {
+          notify('Цены сохранены — сайт обновится автоматически');
+        }
+      });
+
+      btnResetPricing.addEventListener('click', () => {
+        if (!confirm('Вернуть исходные цены и описания?')) return;
+        pricing = clone(DEFAULT_PRICING);
+        writeStore(KEYS.pricing, pricing);
+        fillPricingForm();
+        notify('Цены сброшены к исходным');
+      });
+
+      /* ---------- Контакты ---------- */
+      function fillContactsForm() {
+        contactsForm.elements.city.value = contacts.city || '';
+        contactsForm.elements.phone.value = contacts.phone || '';
+        contactsForm.elements.email.value = contacts.email || '';
+        contactsForm.elements.vk.value = contacts.vk || '';
+      }
+
+      contactsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        contacts = {
+          city: contactsForm.elements.city.value.trim(),
+          phone: contactsForm.elements.phone.value.trim(),
+          email: contactsForm.elements.email.value.trim(),
+          vk: contactsForm.elements.vk.value.trim(),
+        };
+        if (writeStore(KEYS.contacts, contacts)) {
+          notify('Контакты сохранены — сайт обновится автоматически');
+        }
+      });
+
+      btnResetContacts.addEventListener('click', () => {
+        if (!confirm('Вернуть исходные контакты?')) return;
+        contacts = clone(DEFAULT_CONTACTS);
+        writeStore(KEYS.contacts, contacts);
+        fillContactsForm();
+        notify('Контакты сброшены к исходным');
+      });
+
+      /* ---------- Публикация ---------- */
+      function renderExport() {
+        const spans = [34, 38, 28, 21, 34, 38];
+        let html = '';
+
+        photos.forEach((photo, i) => {
+          const span = photo.span || spans[i % spans.length];
+          const width = photo.width || 1024;
+          const height = photo.height || 1024;
+          html += '  <!-- Фото ' + (i + 1) + '. Категория: ' + photo.category + ' -->\n';
+          html += '  <figure class="gallery__item" data-category="' + photo.category + '" data-full="' + escapeHtml(photo.src) + '" style="--span: ' + span + '">\n';
+          html += '    <img src="' + escapeHtml(photo.src) + '"\n';
+          if (!String(photo.src).startsWith('data:')) {
+            html += '         srcset="' + escapeHtml(String(photo.src).replace(/ /g, '%20')) + ' ' + width + 'w"\n';
+          }
+          html += '         sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"\n';
+          html += '         width="' + width + '" height="' + height + '" loading="lazy" decoding="async"\n';
+          html += '         alt="' + escapeHtml(photo.alt) + '">\n';
+          html += '  </figure>\n';
+          if (i < photos.length - 1) html += '\n';
+        });
+
+        exportHtml.value = html;
+      }
+
+      function currentData() {
+        return { photos, pricing, contacts };
+      }
+
+      btnCopyHtml.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(exportHtml.value);
+          notify('HTML скопирован в буфер обмена');
+        } catch (err) {
+          exportHtml.select();
+          document.execCommand('copy');
+          notify('HTML скопирован');
+        }
+      });
+
+      btnDownloadJson.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(currentData(), null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'data.json';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        notify('data.json скачан — положите его рядом с index.html на хостинге');
+      });
+
+      btnCopyJson.addEventListener('click', async () => {
+        const json = JSON.stringify(currentData(), null, 2);
+        try {
+          await navigator.clipboard.writeText(json);
+          notify('JSON скопирован в буфер обмена');
+        } catch (err) {
+          notify('Не удалось скопировать. Используйте скачивание файла.');
+        }
+      });
+
+      importFile.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          const data = JSON.parse(await file.text());
+          if (!data || typeof data !== 'object') throw new Error('Неверный формат файла');
+
+          if (Array.isArray(data.photos) && data.photos.length) {
+            photos = data.photos.map((photo) => ({
+              id: Number(photo.id) || 0,
+              src: String(photo.src || ''),
+              category: ['weddings', 'families', 'kids'].includes(photo.category) ? photo.category : 'weddings',
+              alt: String(photo.alt || ''),
+              width: Number(photo.width) || 1024,
+              height: Number(photo.height) || 1024,
+              span: Number(photo.span) || 34,
+            })).filter((photo) => photo.src);
+
+            // гарантируем уникальные id
+            let id = nextPhotoId();
+            photos.forEach((photo) => {
+              if (!photo.id) photo.id = id++;
+            });
+            writeStore(KEYS.photos, photos);
+          }
+
+          if (data.pricing) {
+            pricing = normalizePricing(data.pricing);
+            writeStore(KEYS.pricing, pricing);
+          }
+
+          if (data.contacts) {
+            contacts = Object.assign(clone(DEFAULT_CONTACTS), data.contacts);
+            writeStore(KEYS.contacts, contacts);
+          }
+
+          refreshAll();
+          notify('Данные загружены');
+        } catch (err) {
+          console.error(err);
+          notify('Не удалось прочитать data.json: ' + (err.message || 'ошибка формата'));
+        } finally {
+          importFile.value = '';
+        }
+      });
+
+      /* ---------- Обновление ---------- */
+      function refreshAll() {
+        renderGallery();
+        renderStats();
+        renderExport();
+        fillPricingForm();
+        fillContactsForm();
+        updateStorageStatus();
+      }
+
+      // Изменения из другой вкладки (например, страницы сайта)
+      window.addEventListener('storage', (e) => {
+        if (!Object.values(KEYS).includes(e.key)) return;
+
+        if (e.key === KEYS.photos) {
+          const stored = readStore(KEYS.photos);
+          if (Array.isArray(stored)) {
+            photos = stored;
+            renderGallery();
+            renderStats();
+            renderExport();
+          }
+        }
+        if (e.key === KEYS.pricing) {
+          pricing = normalizePricing(readStore(KEYS.pricing));
+          fillPricingForm();
+        }
+        if (e.key === KEYS.contacts) {
+          contacts = Object.assign(clone(DEFAULT_CONTACTS), readStore(KEYS.contacts) || {});
+          fillContactsForm();
+        }
+      });
+
+      /* ---------- Предупреждение для file:// ---------- */
+      if (location.protocol === 'file:') {
+        const warning = document.createElement('div');
+        warning.className = 'admin__card';
+        warning.style.cssText = 'border-color:#e0b04a;background:#fff8e6;margin-bottom:1.5rem;';
+        warning.innerHTML =
+          '<h3 style="margin-top:0;">Открыто как файл</h3>' +
+          '<p class="admin__note" style="margin-bottom:0;">Браузер может не передавать сохранённые данные со страницы админки на страницу сайта. ' +
+          'Чтобы фото, цены и контакты обновлялись автоматически, закройте эту вкладку и запустите файл <code>start-server.bat</code> ' +
+          'в папке проекта — откроется <code>http://localhost:8000/admin.html</code>. Подробности — в разделе «Публикация».</p>';
+        document.getElementById('admin-content').prepend(warning);
+      }
+
+      /* ---------- Старт ---------- */
+      showSection('dashboard');
+      refreshAll();
+    })();
+  </script>
+</body>
+</html>

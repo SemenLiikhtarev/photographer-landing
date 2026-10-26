@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Артём Акимов — свадебный и семейный фотограф в Москве</title>
+  <meta name="description" content="Свадебные и семейные фотосессии в Москве и Подмосковье. Искренние кадры без лишнего позирования. Работаю по договору, предоплата 50%. Бронируйте дату.">
+  <meta name="theme-color" content="#faf8f5">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="Артём Акимов — свадебный и семейный фотограф в Москве">
+  <meta property="og:description" content="Свадебные и семейные фотосессии в Москве и Подмосковье. Искренние кадры без лишнего позирования.">
+  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='100%25' height='100%25' fill='%23faf8f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='40' fill='%23c08573'%3EАртём Акимов — свадебный и семейный фотограф в Москве%3C/text%3E%3C/svg%3E">
+
+  <!-- Favicon: inline SVG, без внешних файлов -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c08573'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23faf8f5' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23faf8f5'/%3E%3C/svg%3E">
+
+  <!-- Шрифты: preconnect + display=swap (подключение без блокировки рендера) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- ===== Шапка с навигацией ===== -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a class="header__logo" href="#top">Артём Акимов</a>
+
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Открыть меню">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a href="#about">Обо мне</a></li>
+          <li><a href="#gallery">Галерея</a></li>
+          <li><a href="#pricing">Цены</a></li>
+          <li><a href="#testimonials">Отзывы</a></li>
+          <li><a href="#contacts">Контакты</a></li>
+        </ul>
+        <a class="btn btn--primary nav__cta" href="#contacts">Забронировать дату</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="top" aria-label="Приветствие">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="hero__eyebrow">Свадебный и семейный фотограф</p>
+          <h1 class="hero__title">Артём Акимов — фотограф в Москве</h1>
+          <p class="hero__slogan">Сохраняю ваши самые тёплые моменты — искренне и без лишнего позирования</p>
+          <p class="hero__subtitle">Свадебные и семейные съёмки в Москве и Подмосковье</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#gallery">Смотреть галерею</a>
+            <a class="btn btn--secondary" href="#contacts">Забронировать дату</a>
+          </div>
+        </div>
+        <div class="hero__media">
+          <img src="image.jpeg"
+               srcset="image.jpeg 1024w"
+               sizes="100vw"
+               width="1024" height="1024"
+               fetchpriority="high" loading="eager" decoding="async"
+               alt="Портрет фотографа Артёма Акимова с камерой">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Обо мне ===== -->
+    <section class="section" id="about">
+      <div class="container about__inner">
+        <div class="about__media reveal">
+          <img src="image.jpeg"
+               width="1024" height="1024"
+               loading="lazy" decoding="async"
+               alt="Портрет фотографа Артёма Акимова с камерой">
+        </div>
+        <div class="about__content">
+          <h2 class="section__title reveal">Обо мне</h2>
+          <p class="reveal">Меня зовут Артём Акимов, мне 25 лет, и уже больше пяти лет я снимаю свадьбы и семьи в Москве. За это время через мою камеру прошли сотни пар, десятки малышей и бесконечное количество счастливых, немного растерянных и очень живых взглядов. Я до сих пор не устаю удивляться, как по-разному люди умеют любить друг друга.</p>
+          <p class="reveal">В работе я не люблю постановку ради постановки. Мой подход — быть рядом, замечать детали и не мешать вам проживать этот день. Я подскажу, как встать и куда смотреть, если вы растеряетесь, но большую часть времени просто наблюдаю. Так получаются кадры, на которые через годы хочется смотреть — не «идеальные», а ваши.</p>
+          <p class="reveal">С детьми работаю особенно бережно. Не заставляю улыбаться, не гоняю по локациям и не жду, пока ребёнок «наиграется в кадре». Просто иду за ним — и снимаю настоящую семью: уставшую, весёлую, шумную, свою.</p>
+          <ul class="about__list reveal">
+            <li>Свадебный репортаж — от сборов до первого танца</li>
+            <li>Love-story для пар — в Москве и на выезде</li>
+            <li>Семейные съёмки — с детьми и без</li>
+            <li>Детские портреты — отдельно от родителей</li>
+            <li>Pregnancy и newborn</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Галерея ===== -->
+    <section class="section" id="gallery">
+      <div class="container">
+        <h2 class="section__title reveal">Галерея</h2>
+
+        <div class="gallery__tabs reveal" role="group" aria-label="Фильтр галереи">
+          <button class="tab is-active" data-filter="all" aria-pressed="true">Все</button>
+          <button class="tab" data-filter="weddings" aria-pressed="false">Свадьбы</button>
+          <button class="tab" data-filter="families" aria-pressed="false">Семьи</button>
+          <button class="tab" data-filter="kids" aria-pressed="false">Дети</button>
+        </div>
+
+        <div class="gallery__grid" id="galleryGrid">
+
+          <!-- Фото из папки img: свадебная церемония — обмен кольцами -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (1).jpeg" style="--span: 34">
+            <img src="img/image (1).jpeg"
+                 srcset="img/image%20(1).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Свадебная церемония в Москве — жених и невеста обмениваются кольцами">
+          </figure>
+
+          <!-- Фото из папки img: первый танец молодожёнов -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (2).jpeg" style="--span: 38">
+            <img src="img/image (2).jpeg"
+                 srcset="img/image%20(2).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Первый танец молодожёнов на свадьбе в Подмосковье">
+          </figure>
+
+          <!-- Фото из папки img: невеста на сборах -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (3).jpeg" style="--span: 28">
+            <img src="img/image (3).jpeg"
+                 srcset="img/image%20(3).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Невеста на сборах — момент перед выходом к жениху">
+          </figure>
+
+          <!-- Фото из папки img: свадебный портрет на закате -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (4).jpeg" style="--span: 21">
+            <img src="img/image (4).jpeg"
+                 srcset="img/image%20(4).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Свадебный портрет пары на закате в парке">
+          </figure>
+
+          <!-- Фото из папки img: эмоции гостей, слёзы родителей -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (5).jpeg" style="--span: 34">
+            <img src="img/image (5).jpeg"
+                 srcset="img/image%20(5).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Эмоции гостей на свадьбе — родители вытирают слёзы">
+          </figure>
+
+          <!-- Фото из папки img: пара на крыше с видом на Москву -->
+          <figure class="gallery__item" data-category="weddings" data-full="img/image (1).jpeg" style="--span: 38">
+            <img src="img/image (1).jpeg"
+                 srcset="img/image%20(1).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Пара обнимается на крыше с видом на Москву">
+          </figure>
+
+          <!-- Фото из папки img: семейная фотосессия с двумя детьми -->
+          <figure class="gallery__item" data-category="families" data-full="img/image (2).jpeg" style="--span: 34">
+            <img src="img/image (2).jpeg"
+                 srcset="img/image%20(2).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Семейная фотосессия с двумя детьми в московском парке">
+          </figure>
+
+          <!-- Фото из папки img: родители с малышом на руках дома -->
+          <figure class="gallery__item" data-category="families" data-full="img/image (3).jpeg" style="--span: 38">
+            <img src="img/image (3).jpeg"
+                 srcset="img/image%20(3).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Родители с малышом на руках — тёплый кадр дома">
+          </figure>
+
+          <!-- Фото из папки img: семья в осеннем парке Москвы -->
+          <figure class="gallery__item" data-category="families" data-full="img/image (4).jpeg" style="--span: 28">
+            <img src="img/image (4).jpeg"
+                 srcset="img/image%20(4).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Семья гуляет по осеннему парку в Москве">
+          </figure>
+
+          <!-- Фото из папки img: мама и дочка смеются -->
+          <figure class="gallery__item" data-category="families" data-full="img/image (5).jpeg" style="--span: 21">
+            <img src="img/image (5).jpeg"
+                 srcset="img/image%20(5).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Мама и дочка смеются на семейной съёмке">
+          </figure>
+
+          <!-- Фото из папки img: детский портрет, ребёнок играет в парке -->
+          <figure class="gallery__item" data-category="kids" data-full="img/image (1).jpeg" style="--span: 34">
+            <img src="img/image (1).jpeg"
+                 srcset="img/image%20(1).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Детский портрет — ребёнок играет в парке">
+          </figure>
+
+          <!-- Фото из папки img: новорождённый в кроватке -->
+          <figure class="gallery__item" data-category="kids" data-full="img/image (2).jpeg" style="--span: 38">
+            <img src="img/image (2).jpeg"
+                 srcset="img/image%20(2).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Малыш в кроватке — newborn-съёмка дома">
+          </figure>
+
+          <!-- Фото из папки img: ребёнок бежит по траве на закате -->
+          <figure class="gallery__item" data-category="kids" data-full="img/image (3).jpeg" style="--span: 28">
+            <img src="img/image (3).jpeg"
+                 srcset="img/image%20(3).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Ребёнок бежит по траве на закате">
+          </figure>
+
+          <!-- Фото из папки img: love-story на Патриарших прудах -->
+          <figure class="gallery__item" data-category="kids" data-full="img/image (4).jpeg" style="--span: 21">
+            <img src="img/image (4).jpeg"
+                 srcset="img/image%20(4).jpeg 1024w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                 width="1024" height="1024" loading="lazy" decoding="async"
+                 alt="Love-story пары на Патриарших прудах">
+          </figure>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Цены ===== -->
+    <section class="section" id="pricing">
+      <div class="container">
+        <h2 class="section__title reveal">Цены</h2>
+
+        <div class="pricing__grid">
+          <article class="price-card reveal" data-plan="love-story">
+            <h3 class="price-card__name">Love-story</h3>
+            <p class="price-card__price">12 000 ₽ <!-- цена-заглушка, подтвердить --></p>
+            <p class="price-card__desc">Прогулка для двоих — по Москве, в парке или на вашей любимой локации. Без спешки, без большого количества людей, только вы и я с камерой. Подойдёт для пар, которые хотят живые кадры без свадебной суеты.</p>
+            <ul class="price-card__includes">
+              <li>1–2 часа съёмки</li>
+              <li>40–60 обработанных фото</li>
+              <li>все исходники</li>
+              <li>срок отдачи 2–3 недели</li>
+            </ul>
+            <a class="btn btn--secondary" href="#contacts">Забронировать</a>
+          </article>
+
+          <article class="price-card price-card--popular reveal" data-plan="wedding-day">
+            <span class="price-card__badge">Популярный</span>
+            <h3 class="price-card__name">Свадебный день</h3>
+            <p class="price-card__price">40 000 ₽ <!-- цена-заглушка, подтвердить --></p>
+            <p class="price-card__desc">Полный репортаж вашего дня — от сборов невесты до финального танца. Я не пропущу ни взгляды родителей, ни смех подружек, ни тихие минуты, когда вы остаётесь вдвоём. Самый честный способ сохранить свадьбу такой, какой она была.</p>
+            <ul class="price-card__includes">
+              <li>8–10 часов съёмки</li>
+              <li>300–500 обработанных фото</li>
+              <li>все исходники</li>
+              <li>предсвадебная love-story в подарок</li>
+              <li>срок отдачи 4–6 недель</li>
+            </ul>
+            <a class="btn btn--primary" href="#contacts">Забронировать</a>
+          </article>
+
+          <article class="price-card reveal" data-plan="family">
+            <h3 class="price-card__name">Семейная</h3>
+            <p class="price-card__price">10 000 ₽ <!-- цена-заглушка, подтвердить --></p>
+            <p class="price-card__desc">Съёмка для семьи с детьми — дома, в парке или на вашей любимой площадке. Я не тороплю и не заставляю позировать: играю с детьми, разговариваю с вами и ловлю моменты, которые обычно остаются за кадром.</p>
+            <ul class="price-card__includes">
+              <li>1–2 часа съёмки</li>
+              <li>50–70 обработанных фото</li>
+              <li>все исходники</li>
+              <li>срок отдачи 2–4 недели</li>
+            </ul>
+            <a class="btn btn--secondary" href="#contacts">Забронировать</a>
+          </article>
+        </div>
+
+        <!-- Условия — отдельным блоком -->
+        <div class="terms reveal">
+          <div class="terms__item">
+            <h3>Как забронировать дату</h3>
+            <p>Предоплата — 50% от стоимости тарифа. Остаток вы отдаёте в день съёмки. Предоплата фиксирует дату за вами и не передаётся другим клиентам.</p>
+          </div>
+          <div class="terms__item">
+            <h3>Сроки отдачи</h3>
+            <p>Готовые фотографии я отдаю через 2–6 недель в зависимости от объёма съёмки. Точный срок мы фиксируем в договоре — без сюрпризов.</p>
+          </div>
+          <div class="terms__item">
+            <h3>Выезд за МКАД</h3>
+            <p>Обсуждается отдельно, обычно +дорога. Все детали — в переписке до бронирования.</p>
+          </div>
+          <div class="terms__item">
+            <h3>Договор</h3>
+            <p>Работаю по договору. Все условия, права на фото и порядок оплаты прописаны — и для вас, и для меня.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Отзывы ===== -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <h2 class="section__title reveal">Отзывы</h2>
+
+        <div class="slider reveal" id="testimonialsSlider" aria-roledescription="карусель" aria-label="Отзывы клиентов">
+          <div class="slider__viewport">
+            <div class="slider__track">
+
+              <figure class="slider__slide">
+                <blockquote>
+                  <p>«Мы очень боялись, что будем зажатыми и не сможем расслабиться перед камерой. Но Артём как-то сразу это снял — просто болтал с нами, шутил, и мы забыли, что нас снимают. Когда получили фотографии, я расплакалась на третьем кадре. Там был не просто "красивый день", а именно наш день — с мамой, вытирающей слёзы, и с моим мужем, который наконец выдохнул после церемонии».</p>
+                </blockquote>
+                <figcaption>— Аня и Кирилл, свадьба в Москве, июнь 2024</figcaption>
+              </figure>
+
+              <figure class="slider__slide">
+                <blockquote>
+                  <p>«У нас двое детей, младшему два года, и я честно не верила, что получится хоть один кадр, где все смотрят в камеру. Но Артём не пытался нас построить — он просто играл с детьми, а мы были рядом. В итоге фотографии получились такими живыми, что бабушка не поверила, что это мы. Теперь это наши самые любимые семейные кадры».</p>
+                </blockquote>
+                <figcaption>— Марина и Сергей, семейная съёмка, сентябрь 2024</figcaption>
+              </figure>
+
+              <figure class="slider__slide">
+                <blockquote>
+                  <p>«Мы снимали love-story за неделю до свадьбы и очень волновались — казалось, что будет неловко. Но прогулка получилась как свидание: мы просто гуляли, смеялись, и я почти забыла, что рядом ходит фотограф. Фото получились тёплые, настоящие, без "журнального" глянца. Именно такие мы и хотели».</p>
+                </blockquote>
+                <figcaption>— Лиза и Артём, love-story, май 2024</figcaption>
+              </figure>
+
+            </div>
+          </div>
+
+          <div class="slider__controls">
+            <button class="slider__btn slider__btn--prev" aria-label="Предыдущий отзыв">←</button>
+            <div class="slider__dots" role="tablist" aria-label="Выбор отзыва"></div>
+            <button class="slider__btn slider__btn--next" aria-label="Следующий отзыв">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Контакты ===== -->
+    <section class="section" id="contacts">
+      <div class="container">
+        <h2 class="section__title reveal">Свяжитесь со мной</h2>
+        <p class="section__lead reveal">Отвечаю в ВК и на почту в течение дня. Если у вас горит дата — пишите сразу, бронирую быстро.</p>
+
+        <div class="contacts__inner">
+          <!-- Форма-заглушка: для приёма заявок подключите Formspree / Netlify Forms / свой бэкенд -->
+          <form class="form reveal" id="contactForm" action="#" method="post">
+            <div class="form__field">
+              <label for="name">Имя</label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+            </div>
+            <div class="form__field">
+              <label for="phone">Телефон</label>
+              <input type="tel" id="phone" name="phone" required autocomplete="phone" placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="form__field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email">
+            </div>
+            <div class="form__field">
+              <label for="date">Дата съёмки</label>
+              <input type="date" id="date" name="date">
+            </div>
+            <div class="form__field">
+              <label for="type">Тип съёмки</label>
+              <select id="type" name="type">
+                <option value="" selected>— Выберите тип съёмки —</option>
+                <option value="wedding">Свадьба</option>
+                <option value="love-story">Love-story</option>
+                <option value="family">Семейная</option>
+                <option value="kids">Детская</option>
+                <option value="other">Другое</option>
+              </select>
+            </div>
+            <div class="form__field form__field--full">
+              <label for="message">Сообщение</label>
+              <textarea id="message" name="message" rows="5" placeholder="Расскажите про вашу съёмку — дату, место, сколько вас будет. Отвечу в течение дня."></textarea>
+            </div>
+            <button class="btn btn--primary form__submit" type="submit">Отправить</button>
+          </form>
+
+          <aside class="contacts__aside reveal">
+            <div class="contacts__item">
+              <h3>Город</h3>
+              <p data-contact="city">Москва</p>
+            </div>
+            <div class="contacts__item">
+              <h3>Соцсеть</h3>
+              <p>
+                <a class="contacts__vk" data-contact="vk" href="https://vk.com/username" target="_blank" rel="noopener noreferrer">
+                  <!-- заменить на реальный профиль -->
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/></svg>
+                  ВКонтакте
+                </a>
+              </p>
+            </div>
+            <div class="contacts__item">
+              <h3>Телефон</h3>
+              <p><a data-contact="phone" href="tel:+79000000000">+7 (900) 000-00-00</a> <!-- заменить на реальный номер --></p>
+            </div>
+            <div class="contacts__item">
+              <h3>Email</h3>
+              <p><a data-contact="email" href="mailto:hello@example.com">hello@example.com</a> <!-- заменить на реальный email --></p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Футер ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p>Артём Акимов — свадебный и семейный фотограф в Москве. Работаю по договору. © 2025</p>
+    </div>
+  </footer>
+
+  <!-- ===== Лайтбок ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
+    <button class="lightbox__close" aria-label="Закрыть просмотр">×</button>
+    <button class="lightbox__nav lightbox__nav--prev" aria-label="Предыдущее фото">←</button>
+    <figure class="lightbox__figure">
+      <img id="lightboxImg" src="" alt="">
+      <figcaption id="lightboxCaption"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" aria-label="Следующее фото">→</button>
+  </div>
+
+  <!-- Сначала применяем данные из админки, затем инициализируем галерею/лайтбокс -->
+  <script src="content.js" defer></script>
+  <script src="script.js" defer></script>
+</body>
+</html>
