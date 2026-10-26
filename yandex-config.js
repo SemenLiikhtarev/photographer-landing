@@ -24,7 +24,7 @@
    ============================================================ */
 
 window.YANDEX_DISK = {
-  folderUrl: "",
-  endpoint: "",
+  folderUrl: "https://disk.yandex.ru/client/disk/Заявки",
+  endpoint: "https://functions.yandexcloud.net/d4e193bedm53jpt2udfn",
   fileName: "Заявки.xlsx",
 };
