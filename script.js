@@ -288,24 +288,149 @@
   startAuto();
 
   /* ============================================================
-     Форма: HTML5-валидация + заглушка через alert
-     (для приёма заявок подключите Formspree / Netlify Forms)
+     Форма заявки → Yandex Cloud Function → Excel на Яндекс Диске.
+     Адрес функции и ссылка на папку задаются в yandex-config.js.
      ============================================================ */
   const form = document.getElementById('contactForm');
   const dateInput = document.getElementById('date');
+  const phoneInput = document.getElementById('phone');
+  const statusEl = document.getElementById('formStatus');
+  const submitBtn = form.querySelector('.form__submit');
+  const yandexConfig = window.YANDEX_DISK || {};
+  const endpoint = String(yandexConfig.endpoint || '').trim();
+  const TYPE_LABELS = {
+    wedding: 'Свадьба',
+    'love-story': 'Love-story',
+    family: 'Семейная',
+    kids: 'Детская',
+    other: 'Другое',
+  };
 
   // Нельзя выбрать дату в прошлом
   const today = new Date().toISOString().split('T')[0];
   dateInput.min = today;
 
-  form.addEventListener('submit', (e) => {
+  function setStatus(message, kind, withContacts) {
+    statusEl.textContent = '';
+    statusEl.className = 'form__status' + (kind ? ' form__status--' + kind : '');
+    if (!message) return;
+
+    statusEl.append(document.createTextNode(message));
+
+    if (withContacts) {
+      const email = (document.querySelector('[data-contact="email"]') || {}).textContent;
+      const vkLink = document.querySelector('[data-contact="vk"]');
+
+      if (vkLink && vkLink.href && !vkLink.href.endsWith('/username')) {
+        statusEl.append(document.createTextNode(' Напишите в '));
+        const vk = document.createElement('a');
+        vk.href = vkLink.href;
+        vk.target = '_blank';
+        vk.rel = 'noopener noreferrer';
+        vk.textContent = 'ВКонтакте';
+        statusEl.append(vk);
+        statusEl.append(document.createTextNode('.'));
+      }
+
+      if (email && email.includes('@')) {
+        statusEl.append(document.createTextNode(' Или на '));
+        const mail = document.createElement('a');
+        mail.href = 'mailto:' + email.trim();
+        mail.textContent = email.trim();
+        statusEl.append(mail);
+        statusEl.append(document.createTextNode('.'));
+      }
+    }
+  }
+
+  phoneInput.addEventListener('input', () => {
+    phoneInput.setCustomValidity('');
+  });
+
+  phoneInput.addEventListener('blur', () => {
+    const digits = phoneInput.value.replace(/\D/g, '');
+    phoneInput.setCustomValidity(
+      digits && digits.length < 10 ? 'Введите телефон полностью — не меньше 10 цифр.' : ''
+    );
+  });
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    const name = document.getElementById('name').value.trim();
-    alert(`Спасибо, ${name || 'друг'}! Ваша заявка отправлена — я отвечу в течение дня.`);
-    form.reset();
+
+    if (!endpoint) {
+      setStatus(
+        'Приём заявок пока не подключён. Напишите мне напрямую — я отвечу в течение дня.',
+        'error',
+        true
+      );
+      return;
+    }
+
+    const type = document.getElementById('type').value;
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      phone: phoneInput.value.trim(),
+      email: document.getElementById('email').value.trim(),
+      date: dateInput.value,
+      type,
+      typeLabel: TYPE_LABELS[type] || 'Не указан',
+      message: document.getElementById('message').value.trim(),
+      consent: document.getElementById('consent').checked,
+      company: document.getElementById('company').value,
+      page: location.origin + location.pathname,
+      ts: Date.now(),
+    };
+
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляем…';
+    setStatus('Отправляем заявку…', '');
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (err) {
+        /* ответ может быть пустым */
+      }
+
+      if (!response.ok || !data || data.ok !== true) {
+        throw new Error((data && data.error) || 'Сервис приёма заявок ответил ошибкой.');
+      }
+
+      form.reset();
+      submitBtn.textContent = 'Отправлено ✓';
+      setStatus(
+        `Спасибо, ${payload.name || 'друг'}! Заявка записана — я отвечу в течение дня.`,
+        'success'
+      );
+      setTimeout(() => {
+        submitBtn.textContent = originalLabel;
+      }, 4000);
+    } catch (err) {
+      console.error('Не удалось отправить заявку:', err);
+      const message = err.name === 'AbortError'
+        ? 'Сервер долго не отвечает. Попробуйте ещё раз или напишите мне напрямую.'
+        : 'Не удалось отправить заявку. Попробуйте ещё раз или напишите мне напрямую.';
+      setStatus(message, 'error', true);
+      submitBtn.textContent = originalLabel;
+    } finally {
+      clearTimeout(timer);
+      submitBtn.disabled = false;
+    }
   });
 })();

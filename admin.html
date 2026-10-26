@@ -456,6 +456,7 @@
         <a href="#gallery" class="admin__nav-link" data-section="gallery">Галерея</a>
         <a href="#pricing" class="admin__nav-link" data-section="pricing">Цены</a>
         <a href="#contacts" class="admin__nav-link" data-section="contacts">Контакты</a>
+        <a href="#requests" class="admin__nav-link" data-section="requests">Заявки</a>
         <a href="#publish" class="admin__nav-link" data-section="publish">Публикация</a>
       </div>
       <a class="btn btn--secondary" href="index.html" target="_blank" rel="noopener" style="width:100%;margin-bottom:.75rem;">Открыть сайт ↗</a>
@@ -486,6 +487,7 @@
               <button class="btn btn--primary" data-goto="gallery">Добавить фото</button>
               <button class="btn btn--secondary" data-goto="pricing">Изменить цены</button>
               <button class="btn btn--secondary" data-goto="contacts">Изменить контакты</button>
+              <button class="btn btn--secondary" data-goto="requests">Заявки</button>
             </div>
           </div>
 
@@ -625,6 +627,45 @@
           </form>
         </section>
 
+        <!-- ===== Заявки ===== -->
+        <section id="section-requests" class="admin__section">
+          <h2>Заявки</h2>
+          <p class="admin__note">Форма на сайте отправляет заявки в облачную функцию, а она дописывает строку в Excel-файл на Яндекс Диске. Заявки не хранятся в браузере.</p>
+
+          <div class="admin__card">
+            <h3>Подключение</h3>
+            <div class="admin__form-row admin__form-row--2">
+              <div>
+                <label for="ydFolder">Адрес папки на Яндекс Диске (из строки браузера)</label>
+                <input type="url" id="ydFolder" readonly placeholder="Не указана в yandex-config.js">
+              </div>
+              <div>
+                <label for="ydEndpoint">Адрес функции приёма заявок</label>
+                <input type="url" id="ydEndpoint" readonly placeholder="Не указан в yandex-config.js">
+              </div>
+            </div>
+            <p class="admin__note" style="margin-bottom:0;">Оба значения задаются в файле <code>yandex-config.js</code> в корне проекта. Для папки укажите адрес из строки браузера (<code>disk.yandex.ru/client/disk/...</code>), а не публичную ссылку <code>/d/...</code> — публичная ссылка откроет заявки всем. После правки закоммитьте файл.</p>
+            <div class="admin__actions" style="margin-top:1.25rem;">
+              <a class="btn btn--primary" id="btnOpenFolder" href="#" target="_blank" rel="noopener noreferrer">Открыть папку на Диске</a>
+              <button class="btn btn--secondary" id="btnCheckRequests" type="button">Проверить подключение</button>
+              <button class="btn btn--secondary" id="btnTestRequest" type="button">Отправить тестовую заявку</button>
+            </div>
+            <p class="admin__note" id="requestsStatus" role="status" aria-live="polite" style="margin:1rem 0 0;">Проверяю настройки…</p>
+          </div>
+
+          <div class="admin__card">
+            <h3>Как это работает</h3>
+            <ol class="admin__note" style="margin:0;padding-left:1.25rem;">
+              <li>Посетитель заполняет форму на сайте и подтверждает согласие на обработку данных.</li>
+              <li>Заявка уходит в Yandex Cloud Function — небольшой серверный обработчик.</li>
+              <li>Функция создаёт или дополняет файл <code>Заявки.xlsx</code> в указанной папке Яндекс Диска.</li>
+              <li>Excel-файл открывается в Яндекс Диске, Excel, LibreOffice или Google Таблицах.</li>
+            </ol>
+            <p class="admin__note">Файл: <code id="ydFileName">Заявки.xlsx</code>. Папка должна существовать заранее; файл создаётся при первой заявке.</p>
+            <p class="admin__note" style="margin-bottom:0;">OAuth-токен Яндекс Диска хранится только в переменных окружения функции и никогда не попадает в браузер или репозиторий. Пошаговая настройка — в <code>README.md</code>, раздел «Сбор заявок в Excel на Яндекс Диске».</p>
+          </div>
+        </section>
+
         <!-- ===== Публикация ===== -->
         <section id="section-publish" class="admin__section">
           <h2>Публикация</h2>
@@ -669,6 +710,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="yandex-config.js"></script>
   <script>
     /* ============================================================
        Админ-панель статического сайта.
@@ -860,6 +902,15 @@
       const btnDownloadJson = document.getElementById('btnDownloadJson');
       const btnCopyJson = document.getElementById('btnCopyJson');
       const importFile = document.getElementById('importFile');
+
+      const ydConfig = window.YANDEX_DISK || {};
+      const ydFolder = document.getElementById('ydFolder');
+      const ydEndpoint = document.getElementById('ydEndpoint');
+      const ydFileName = document.getElementById('ydFileName');
+      const btnOpenFolder = document.getElementById('btnOpenFolder');
+      const btnCheckRequests = document.getElementById('btnCheckRequests');
+      const btnTestRequest = document.getElementById('btnTestRequest');
+      const requestsStatus = document.getElementById('requestsStatus');
 
       const statEls = {
         total: document.getElementById('statTotal'),
@@ -1248,6 +1299,140 @@
         notify('Контакты сброшены к исходным');
       });
 
+      /* ---------- Заявки в Excel на Яндекс Диске ---------- */
+      const requestsEndpoint = String(ydConfig.endpoint || '').trim();
+      const requestsFolder = String(ydConfig.folderUrl || '').trim();
+
+      function setRequestsStatus(message, kind) {
+        requestsStatus.textContent = message;
+        requestsStatus.style.color = kind === 'error'
+          ? '#a4453c'
+          : kind === 'success'
+            ? '#2f6b46'
+            : '';
+      }
+
+      function initRequests() {
+        ydFolder.value = requestsFolder;
+        ydEndpoint.value = requestsEndpoint;
+        ydFileName.textContent = ydConfig.fileName || 'Заявки.xlsx';
+
+        if (requestsFolder) {
+          btnOpenFolder.href = requestsFolder;
+        } else {
+          btnOpenFolder.removeAttribute('href');
+          btnOpenFolder.setAttribute('aria-disabled', 'true');
+          btnOpenFolder.style.opacity = '.55';
+          btnOpenFolder.style.pointerEvents = 'none';
+        }
+
+        if (!requestsEndpoint && !requestsFolder) {
+          setRequestsStatus('Сбор заявок не настроен: заполните folderUrl и endpoint в yandex-config.js.', 'error');
+        } else if (!requestsEndpoint) {
+          setRequestsStatus('Ссылка на папку указана, но адрес функции приёма заявок (endpoint) пуст.', 'error');
+        } else if (!requestsFolder) {
+          setRequestsStatus('Функция указана, но нет ссылки на папку Яндекс Диска (folderUrl).', 'error');
+        } else if (/\/d\//i.test(requestsFolder)) {
+          setRequestsStatus(
+            'Внимание: указана публичная ссылка на папку (/d/...). Любой, кто её знает, сможет открыть заявки. ' +
+            'Замените folderUrl на адрес из строки браузера: https://disk.yandex.ru/client/disk/...',
+            'error'
+          );
+        } else {
+          setRequestsStatus('Настройки загружены. Нажмите «Проверить подключение».');
+        }
+      }
+
+      async function checkRequests() {
+        if (!requestsEndpoint) {
+          setRequestsStatus('Сначала укажите endpoint в yandex-config.js.', 'error');
+          return;
+        }
+
+        btnCheckRequests.disabled = true;
+        setRequestsStatus('Проверяю связь с функцией…');
+
+        try {
+          const url = requestsEndpoint + (requestsEndpoint.includes('?') ? '&' : '?') + 'ping=1';
+          const response = await fetch(url, { headers: { Accept: 'application/json' } });
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok || !data || data.ok !== true) {
+            throw new Error((data && data.error) || 'функция ответила ошибкой ' + response.status);
+          }
+
+          setRequestsStatus(
+            'Подключение работает. Функция на связи, файл: ' + (data.file || ydConfig.fileName || 'Заявки.xlsx') + '.',
+            'success'
+          );
+        } catch (err) {
+          console.error(err);
+          setRequestsStatus(
+            'Не удалось проверить подключение: ' + (err.message || 'сетевая ошибка') +
+            '. Проверьте адрес функции и настройку CORS (ALLOWED_ORIGINS).',
+            'error'
+          );
+        } finally {
+          btnCheckRequests.disabled = false;
+        }
+      }
+
+      async function sendTestRequest() {
+        if (!requestsEndpoint) {
+          setRequestsStatus('Сначала укажите endpoint в yandex-config.js.', 'error');
+          return;
+        }
+
+        if (!confirm('Отправить тестовую заявку? В таблице появится строка «Тестовая заявка».')) return;
+
+        btnTestRequest.disabled = true;
+        setRequestsStatus('Отправляю тестовую заявку…');
+
+        try {
+          const response = await fetch(requestsEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({
+              name: 'Тестовая заявка',
+              phone: '+7 900 000-00-00',
+              email: 'test@example.com',
+              date: '',
+              type: 'other',
+              typeLabel: 'Проверка интеграции',
+              message: 'Тестовая заявка из админ-панели. Можно удалить строку из Excel.',
+              consent: true,
+              company: '',
+              page: location.origin + location.pathname,
+              ts: Date.now(),
+            }),
+          });
+
+          const data = await response.json().catch(() => null);
+          if (!response.ok || !data || data.ok !== true) {
+            throw new Error((data && data.error) || 'функция ответила ошибкой ' + response.status);
+          }
+
+          setRequestsStatus(
+            'Готово: тестовая заявка записана в Excel' +
+            (data.row ? ' (строка ' + data.row + ')' : '') +
+            '. Откройте папку на Диске и проверьте файл.',
+            'success'
+          );
+        } catch (err) {
+          console.error(err);
+          setRequestsStatus(
+            'Тестовая заявка не отправлена: ' + (err.message || 'сетевая ошибка') +
+            '. Проверьте адрес функции, токен и путь к папке в настройках функции.',
+            'error'
+          );
+        } finally {
+          btnTestRequest.disabled = false;
+        }
+      }
+
+      btnCheckRequests.addEventListener('click', checkRequests);
+      btnTestRequest.addEventListener('click', sendTestRequest);
+
       /* ---------- Публикация ---------- */
       function renderExport() {
         const spans = [34, 38, 28, 21, 34, 38];
@@ -1406,6 +1591,7 @@
 
       /* ---------- Старт ---------- */
       showSection('dashboard');
+      initRequests();
       refreshAll();
     })();
   </script>

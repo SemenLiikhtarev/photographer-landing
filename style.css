@@ -786,6 +786,61 @@ body.menu-open .burger span:nth-child(3) {
   justify-self: start;
 }
 
+.form__submit[disabled] {
+  opacity: .65;
+  cursor: progress;
+}
+
+.form__consent {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: .65rem;
+  align-items: flex-start;
+  font-size: .9rem;
+  line-height: 1.5;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.form__consent input {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: .15rem;
+  accent-color: var(--accent);
+}
+
+.form__status {
+  grid-column: 1 / -1;
+  min-height: 1.4em;
+  margin: 0;
+  font-size: .925rem;
+  line-height: 1.5;
+}
+
+.form__status--success {
+  color: #2f6b46;
+}
+
+.form__status--error {
+  color: #a4453c;
+}
+
+.form__status a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+
+/* Honeypot: поле видят только боты */
+.form__hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .contacts__aside {
   display: grid;
   gap: 1.5rem;

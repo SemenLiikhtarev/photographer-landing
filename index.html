@@ -364,19 +364,24 @@
         <p class="section__lead reveal">Отвечаю в ВК и на почту в течение дня. Если у вас горит дата — пишите сразу, бронирую быстро.</p>
 
         <div class="contacts__inner">
-          <!-- Форма-заглушка: для приёма заявок подключите Formspree / Netlify Forms / свой бэкенд -->
+          <!-- Заявки уходят в Yandex Cloud Function и сохраняются в Excel на Яндекс Диске.
+               Настройки — в yandex-config.js, инструкция — в README.md. -->
           <form class="form reveal" id="contactForm" action="#" method="post">
+            <div class="form__hp" aria-hidden="true">
+              <label for="company">Компания</label>
+              <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+            </div>
             <div class="form__field">
               <label for="name">Имя</label>
-              <input type="text" id="name" name="name" required autocomplete="name">
+              <input type="text" id="name" name="name" required autocomplete="name" maxlength="80">
             </div>
             <div class="form__field">
               <label for="phone">Телефон</label>
-              <input type="tel" id="phone" name="phone" required autocomplete="phone" placeholder="+7 (___) ___-__-__">
+              <input type="tel" id="phone" name="phone" required autocomplete="phone" placeholder="+7 (___) ___-__-__" maxlength="30">
             </div>
             <div class="form__field">
               <label for="email">Email</label>
-              <input type="email" id="email" name="email" autocomplete="email">
+              <input type="email" id="email" name="email" autocomplete="email" maxlength="120">
             </div>
             <div class="form__field">
               <label for="date">Дата съёмки</label>
@@ -395,8 +400,13 @@
             </div>
             <div class="form__field form__field--full">
               <label for="message">Сообщение</label>
-              <textarea id="message" name="message" rows="5" placeholder="Расскажите про вашу съёмку — дату, место, сколько вас будет. Отвечу в течение дня."></textarea>
+              <textarea id="message" name="message" rows="5" maxlength="2000" placeholder="Расскажите про вашу съёмку — дату, место, сколько вас будет. Отвечу в течение дня."></textarea>
             </div>
+            <label class="form__consent">
+              <input type="checkbox" id="consent" name="consent" required>
+              <span>Согласен на обработку персональных данных — имя, телефон и email нужны, чтобы ответить на заявку.</span>
+            </label>
+            <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
             <button class="btn btn--primary form__submit" type="submit">Отправить</button>
           </form>
 
@@ -449,6 +459,8 @@
   </div>
 
   <!-- Сначала применяем данные из админки, затем инициализируем галерею/лайтбокс -->
+  <!-- Настройки сбора заявок (ссылка на папку и адрес функции) -->
+  <script src="yandex-config.js" defer></script>
   <script src="content.js" defer></script>
   <script src="script.js" defer></script>
 </body>
