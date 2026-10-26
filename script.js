@@ -391,7 +391,7 @@
     setStatus('Отправляем заявку…', '');
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20000);
+    const timer = setTimeout(() => controller.abort(), 30000);
 
     try {
       const response = await fetch(endpoint, {
@@ -409,7 +409,9 @@
       }
 
       if (!response.ok || !data || data.ok !== true) {
-        throw new Error((data && data.error) || 'Сервис приёма заявок ответил ошибкой.');
+        const error = new Error((data && data.error) || 'Сервис приёма заявок ответил ошибкой.');
+        error.serverMessage = data && data.error;
+        throw error;
       }
 
       form.reset();
@@ -423,9 +425,16 @@
       }, 4000);
     } catch (err) {
       console.error('Не удалось отправить заявку:', err);
-      const message = err.name === 'AbortError'
-        ? 'Сервер долго не отвечает. Попробуйте ещё раз или напишите мне напрямую.'
-        : 'Не удалось отправить заявку. Попробуйте ещё раз или напишите мне напрямую.';
+
+      let message;
+      if (err.serverMessage) {
+        message = err.serverMessage;
+      } else if (err.name === 'AbortError') {
+        message = 'Сервер долго не отвечает. Попробуйте ещё раз или напишите мне напрямую.';
+      } else {
+        message = 'Не удалось отправить заявку. Попробуйте ещё раз или напишите мне напрямую.';
+      }
+
       setStatus(message, 'error', true);
       submitBtn.textContent = originalLabel;
     } finally {

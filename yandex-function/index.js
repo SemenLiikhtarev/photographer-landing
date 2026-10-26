@@ -243,10 +243,35 @@ async function diskError(response, fallback) {
   if (response.status === 404) {
     return new PublicError('Папка не найдена на Яндекс Диске. Проверьте YANDEX_DISK_FOLDER.', 500);
   }
+  if (response.status === 423 || /заблокирован/i.test(detail)) {
+    return new PublicError(
+      'Файл заявок сейчас открыт или заблокирован. Закройте его в Excel, Яндекс Документах или другом приложении и отправьте заявку ещё раз.',
+      503
+    );
+  }
   if (response.status === 507) {
     return new PublicError('На Яндекс Диске закончилось свободное место.', 500);
   }
   return new PublicError(fallback + (detail ? ': ' + detail : ''), 500);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Яндекс Диск отвечает 423, если файл открыт в редакторе или занят другой
+// операцией. Несколько коротких повторов обычно решают проблему.
+async function diskRequestRetry(path, options, attempts) {
+  const total = attempts || 3;
+  let response = null;
+
+  for (let attempt = 0; attempt < total; attempt += 1) {
+    response = await diskRequest(path, options);
+    if (response.status !== 423) return response;
+    if (attempt < total - 1) await sleep(400 * (attempt + 1));
+  }
+
+  return response;
 }
 
 async function ensureFolder() {
@@ -261,7 +286,7 @@ async function ensureFolder() {
 }
 
 async function downloadWorkbook() {
-  const meta = await diskRequest('/resources/download?path=' + encodeURIComponent(FILE_PATH));
+  const meta = await diskRequestRetry('/resources/download?path=' + encodeURIComponent(FILE_PATH));
   if (meta.status === 404) return null;
   if (!meta.ok) throw await diskError(meta, 'Не удалось получить файл');
 
@@ -274,7 +299,7 @@ async function downloadWorkbook() {
 }
 
 async function uploadWorkbook(buffer) {
-  const meta = await diskRequest(
+  const meta = await diskRequestRetry(
     '/resources/upload?path=' + encodeURIComponent(FILE_PATH) + '&overwrite=true'
   );
   if (!meta.ok) throw await diskError(meta, 'Не удалось получить ссылку на загрузку');
